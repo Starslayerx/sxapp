@@ -4,7 +4,7 @@
     <script src="https://cdn.acwing.com/static/jquery/js/jquery-3.3.1.min.js"></script>
 
     <link rel="stylesheet" href="{% static 'css/game.css' %}">
-    <script src="{% static 'js/dist/game.js' %}"></script>
+    <script type="module" src="{% static 'js/dist/game.js' %}"></script>
 
     <link rel="icon" href="https://cdn.acwing.com/media/article/image/2021/12/17/1_be4c11ce5f-acapp.png">
 </head>
@@ -13,7 +13,7 @@
 <body style="margin: 0">
     <div id="sx_game_1"></div>
     <script type="module">
-        import {AcGame} from "{% static 'js/dist/game.js' %}";
+        import {SxGame} from "{% static 'js/dist/game.js' %}";
         $(document).ready(function() {
             let sx_game = new SxGame("sx_game_1");
         });
