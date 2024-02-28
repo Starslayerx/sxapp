@@ -14,11 +14,12 @@ class SxGameMenu {
                     </div>
                     </br>
                     <div class = "sx-game-menu-field-item sx-game-menu-field-item-settings">
-                        设置
+                         退出
                     </div>
                 </div>
             </div>
         `);
+        this.$menu.hide();
         // 将对象添加到div中
         this.root.$sx_game.append(this.$menu);
         this.$single_mode = this.$menu.find('.sx-game-menu-field-item-single');
@@ -43,6 +44,7 @@ class SxGameMenu {
         });
         this.$settings.click(function() {
             console.log("click settings");
+            outer.root.settings.logout_on_remote();
         });
     }
 
