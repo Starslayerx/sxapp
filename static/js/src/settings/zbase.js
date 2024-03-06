@@ -42,7 +42,7 @@ class Settings {
                     <div class="sx-game-settings-github">
                         <img width="30" src="https://app6532.acapp.acwing.com.cn/static/image/settings/github_logo.png">
                         <div>
-                            GitHhub登陆
+                            GitHub登陆
                         </div>
                     </div>
                 </div>
@@ -113,6 +113,8 @@ class Settings {
         this.$register_login = this.$register.find(".sx-game-settings-option");
         this.$register.hide();
 
+        this.$github_login = this.$settings.find('.sx-game-settings-github img')
+
         this.root.$sx_game.append(this.$settings);
 
         this.start();
@@ -125,8 +127,14 @@ class Settings {
 
     // 绑定监听函数
     add_listening_events() {
+        let outer = this;
+
         this.add_listening_events_login();
         this.add_listening_events_register();
+
+        this.$github_login.click(function() {
+            outer.github_login();
+        });
     }
 
     add_listening_events_login() {
@@ -146,6 +154,19 @@ class Settings {
         });
         this.$register_submit.click(function() {
             outer.register_on_remote();
+        });
+    }
+
+    github_login() {
+        $.ajax({
+            url: "https://app6532.acapp.acwing.com.cn/settings/github/web/apply_code/",
+            type: "GET",
+            success: function(resp) {
+                console.log(resp);
+                if (resp.result === "success") {
+                    window.location.replace(resp.apply_code_url);
+                }
+            }
         });
     }
 
@@ -230,6 +251,7 @@ class Settings {
 
     getinfo() {
         let outer = this;
+
         $.ajax({
             url: "https://app6532.acapp.acwing.com.cn/settings/getinfo/",
             type: "GET",
@@ -237,7 +259,6 @@ class Settings {
                 platform: outer.platform,
             },
             success: function(resp) {
-                console.log("Response:", resp);
                 if (resp.result === "success") {
                     outer.username = resp.username;
                     outer.photo = resp.photo;
@@ -247,7 +268,7 @@ class Settings {
                     outer.login();
                 }
             }
-        })
+        });
     }
 
     hide() {
