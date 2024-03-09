@@ -15,7 +15,7 @@ class Player extends SxGameObject {
         this.color = color;
         this.speed = speed;
         this.is_me = is_me;
-        this.eps = 0.1;
+        this.eps = 0.01;
         this.friction = 0.9; // 磨擦力
         this.spent_time = 0; // 记录时间
 
@@ -34,8 +34,8 @@ class Player extends SxGameObject {
             this.add_listening_events();
         } else {
             // random: 0~1
-            let tx = Math.random() * this.playground.width;
-            let ty = Math.random() * this.playground.height;
+            let tx = Math.random() * this.playground.width / this.playground.scale;
+            let ty = Math.random() * this.playground.height / this.playground.scale;
             this.move_to(tx, ty);
         }
     }
@@ -49,10 +49,10 @@ class Player extends SxGameObject {
             const rect = outer.ctx.canvas.getBoundingClientRect();
             // 3:右键; 2:左键
             if (e.which === 3) {
-                outer.move_to(e.clientX - rect.left, e.clientY - rect.top); // 鼠标坐标 (clientXY 整个屏幕的绝对坐标)
+                outer.move_to((e.clientX - rect.left) / outer.playground.scale, (e.clientY - rect.top) / outer.playground.scale); // 鼠标坐标 (clientXY 整个屏幕的绝对坐标)
             } else if (e.which === 1) {
                 if (outer.cur_skill === "fireball") {
-                    outer.shoot_fireball(e.clientX - rect.left, e.clientY - rect.top);
+                    outer.shoot_fireball((e.clientX - rect.left) / outer.playground.scale, (e.clientY - rect.top) / outer.playground.scale);
                 }
                 outer.cur_skill = null;
             }
@@ -78,15 +78,16 @@ class Player extends SxGameObject {
     shoot_fireball(tx, ty) {
         let x = this.x + this.radius * Math.cos(this.getMouseAngle(tx, ty)); // 火球生成增加偏移
         let y = this.y + this.radius * Math.sin(this.getMouseAngle(tx, ty));
-        let radius = this.playground.height * 0.01;
+        // let x = this.x, y = this.y;
+        let radius = 0.01;
         let angle = Math.atan2(ty - this.y, tx - this.x);
         let vx = Math.cos(angle);
         let vy = Math.sin(angle);
         let color = "orange";
-        let speed = this.playground.height * 0.5;
-        let move_length = this.playground.height * 1;
+        let speed = 0.5;
+        let move_length = 1;
 
-        new FireBall(this.playground, this, x, y, radius, vx, vy, color, speed, move_length, this.playground.height * 0.01);
+        new FireBall(this.playground, this, x, y, radius, vx, vy, color, speed, move_length, 0.01);
     }
 
     move_to(tx, ty) {
@@ -116,7 +117,7 @@ class Player extends SxGameObject {
         }
 
         this.radius -= damage;
-        if (this.radius < 10) {
+        if (this.radius < this.eps) {
             this.destroy();
             return false;
         }
@@ -127,6 +128,12 @@ class Player extends SxGameObject {
     }
 
     update() {
+        this.update_move();
+        this.render();
+    }
+
+    // 更新玩家移动
+    update_move() {
         this.spent_time += this.timedelta / 1000;
         // 敌人随机发射火球，3s保护期，平均5s一次
         if (!this.is_me && this.spent_time > 3 && Math.random() < 1 / 300.0) {
@@ -138,7 +145,7 @@ class Player extends SxGameObject {
             this.shoot_fireball(tx, ty);
         }
 
-        if (this.damage_speed > 10) {
+        if (this.damage_speed > this.eps) {
             this.vx = this.vy = 0;
             this.move_length = 0;
             this.x += this.damage_x * this.damage_speed * this.timedelta / 1000;
@@ -149,8 +156,8 @@ class Player extends SxGameObject {
                 this.move_length = 0;
                 this.vx = this.vy = 0; // 离目标很进时，停止移动
                 if (!this.is_me) {
-                    let tx = Math.random() * this.playground.width;
-                    let ty = Math.random() * this.playground.height;
+                    let tx = Math.random() * this.playground.width / this.playground.scale;
+                    let ty = Math.random() * this.playground.height / this.playground.scale;
                     this.move_to(tx, ty);
                 }
             } else {
@@ -161,21 +168,22 @@ class Player extends SxGameObject {
                 this.move_length -= moved; // 剩下移动距离
             }
         }
-        this.render();
     }
 
     render() {
+        let scale = this.playground.scale;
+
         if (this.is_me) {
             this.ctx.save();
             this.ctx.beginPath();
-            this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+            this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
             this.ctx.stroke();
             this.ctx.clip();
-            this.ctx.drawImage(this.img, this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
+            this.ctx.drawImage(this.img, (this.x - this.radius) * scale, (this.y - this.radius) * scale, this.radius * 2 * scale, this.radius * 2 * scale);
             this.ctx.restore();
         } else {
             this.ctx.beginPath();
-            this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+            this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
             this.ctx.fillStyle = this.color;
             this.ctx.fill();
         }
