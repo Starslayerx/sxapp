@@ -42,6 +42,11 @@ class SxGamePlayground {
         this.height = this.$playground.height();
         this.game_map = new GameMap(this);
 
+        this.mode = mode;
+        this.state = "waiting"; // 玩家状态 waiting --> fighting --> over
+        this.notice_board = new NoticeBoard(this);
+        this.player_count = 0;
+
         this.resize();
 
         this.players = []

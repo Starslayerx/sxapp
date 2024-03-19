@@ -162,7 +162,6 @@ class Settings {
             url: "https://app6532.acapp.acwing.com.cn/settings/github/web/apply_code/",
             type: "GET",
             success: function(resp) {
-                console.log(resp);
                 if (resp.result === "success") {
                     window.location.replace(resp.apply_code_url);
                 }
@@ -186,7 +185,6 @@ class Settings {
                 password: password,
             },
             success: function(resp) {
-                console.log(resp);
                 if (resp.result == "success") {
                     location.reload();
                 } else {
@@ -213,7 +211,6 @@ class Settings {
                 password_confirm: password_confirm,
             },
             success: function(resp) {
-                console.log(resp);
                 if (resp.result === "success") {
                     location.reload(); // 刷新页面
                 } else {
@@ -225,18 +222,20 @@ class Settings {
 
     // 远程登出
     logout_on_remote() {
-        if (this.platform === "SXAPP") return false;
+        if (this.platform === "SXAPP") {
+            this.root.SxOS.api.window.close();
+        } else {
+            $.ajax({
+                url: "https://app6532.acapp.acwing.com.cn/settings/logout/",
+                type: "GET",
+                success: function(resp) {
+                    if (resp.result === "success") {
+                        location.reload();
+                    }
+                },
+            })
+        }
 
-        $.ajax({
-            url: "https://app6532.acapp.acwing.com.cn/settings/logout/",
-            type: "GET",
-            success: function(resp) {
-                console.log(resp);
-                if (resp.result === "success") {
-                    location.reload();
-                }
-            },
-        })
     }
 
     register() { // 打开注册界面

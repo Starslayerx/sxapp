@@ -6,7 +6,6 @@ class SxGameObject {
         this.has_called_start = false; // 是否执行过start()函数
         this.timedelta = 0; // 当前帧距离上一帧时间间隔，单位ms
         this.uuid = this.create_uuid();
-        console.log("uuid" + this.uuid);
     }
 
     // 创建唯一编号

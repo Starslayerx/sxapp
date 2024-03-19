@@ -25,6 +25,17 @@ class FireBall extends SxGameObject {
             return false;
         }
 
+        this.update_move();
+
+        // 命中判断仅属于发出者所在窗口
+        if (this.player.character !== "enemy") {
+            this.update_attack();
+        }
+
+        this.render();
+    }
+
+    update_move() {
         // 每帧移动的距离
         let moved = Math.min(this.move_length, this.speed * this.timedelta / 1000);
         // x y方向移动
@@ -32,13 +43,14 @@ class FireBall extends SxGameObject {
         this.y += this.vy * moved;
         // 更新距离目的地的距离
         this.move_length -= moved;
+    }
 
-        this.render();
-
+    update_attack() {
         for (let i = 0; i < this.playground.players.length; i++) {
             let player = this.playground.players[i];
             if (this.player !== player && this.is_collision(player)) {
                 this.attack(player);
+                break; // 这里是为了只攻击到一名玩家
             }
         }
     }
@@ -59,6 +71,11 @@ class FireBall extends SxGameObject {
     attack(player) {
         let angle = Math.atan2(player.y - this.y, player.x - this.x);
         player.is_attacked(angle, this.damage);
+
+        if (this.playground.mode === "multi mode") {
+            this.playground.mps.send_attack(player.uuid, player.x, player.y, angle, this.damage, this.uuid);
+        }
+
         this.destroy();
     }
 
@@ -69,5 +86,15 @@ class FireBall extends SxGameObject {
         this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);
         this.ctx.fillStyle = this.color;
         this.ctx.fill();
+    }
+
+    on_destroy() {
+        let fireballs = this.player.fireballs;
+        for (let i = 0; i < fireballs.length; i++) {
+            if (fireballs[i] === this) {
+                fireballs.splice(i, 1);
+                break;
+            }
+        }
     }
 }
