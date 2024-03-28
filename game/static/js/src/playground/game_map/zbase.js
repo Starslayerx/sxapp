@@ -2,7 +2,7 @@ class GameMap extends SxGameObject {
     constructor(playground) {
         super(); // 调用基类的构造函数
         this.playground = playground;
-        this.$canvas = $(`<canvas></canvas>`);
+        this.$canvas = $(`<canvas tabindex=0></canvas>`); // 元素添加监听事件
         this.ctx = this.$canvas[0].getContext('2d'); // canvas[0]是指匹配到的第一个canvas元素
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
@@ -10,7 +10,7 @@ class GameMap extends SxGameObject {
     }
 
     start() {
-        this.$canvas.focus();
+        this.$canvas.focus(); // 将窗口聚焦
     }
 
     resize() {

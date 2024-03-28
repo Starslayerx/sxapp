@@ -69,7 +69,7 @@ class Player extends SxGameObject {
 
         this.playground.game_map.$canvas.mousedown(function(e) {
             if (outer.playground.state != "fighting")
-                return false;
+                return true;
 
             const rect = outer.ctx.canvas.getBoundingClientRect();
             // 3:右键; 2:左键
@@ -114,10 +114,21 @@ class Player extends SxGameObject {
 
         });
 
-        // 获取键盘按键
-        $(window).keydown(function(e) {
+        // 获取键盘事件
+        this.playground.game_map.$canvas.keydown(function(e) {
             // 查看按键多少
             // console.log(e.which);
+
+            if (e.which === 13) { // 回车
+                if (outer.playground.mode === "multi mode") { // 打开聊天框
+                    outer.playground.chat_field.show_input();
+                    return false;
+                }
+            } else if (e.which === 27) {
+                if (outer.playground.mode === "multi mode") { // 关闭聊天框
+                    outer.playground.chat_field.hide_input();
+                }
+            }
 
             if (outer.playground.state != "fighting")
                 return true;
