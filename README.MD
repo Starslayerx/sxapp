@@ -1,6 +1,6 @@
 # My Online Game
 
-[线上体验](https://app6532.acapp.acwing.com.cn/)
+[线上体验]() （服务器已到期）
 
 进入网站后可注册帐号游玩，或使用GitHub授权登陆
 > 由于GitHub服务器在国外，通过GitHub授权登陆可能比较卡，需要等待一会儿
